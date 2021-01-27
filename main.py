@@ -4,6 +4,7 @@ import datetime
 
 FILE_NAME = "hello.txt"
 
+
 def get_client():
 
     return boto3.client("s3", region_name="us-east-1")
@@ -18,39 +19,47 @@ def create_bucket(s3_client, bucket_name):
 
 #     s3_client.delete_bucket(Bucket=bucket_name)
 
+
 def list_buckets(s3_client):
 
     list_response = s3_client.list_buckets()
     buckets = list_response.get("Buckets")
 
-    bucket_names = [bucket['Name'] for bucket in buckets]
+    bucket_names = [bucket["Name"] for bucket in buckets]
 
     return bucket_names
 
-# def upload_file(s3_client, bucket_name):
 
-#     s3_client.upload_file('./' + FILE_NAME, bucket_name, FILE_NAME)
+def upload_file(s3_client, bucket_name):
 
-# def download_file(s3_client, bucket_name):
+    response = s3_client.upload_file("./" + FILE_NAME, bucket_name, FILE_NAME)
+    print(response)
+    return response
 
-#     s3_client.download_file(bucket_name, FILE_NAME, 'downloaded' + FILE_NAME)
+
+def download_file(s3_client, bucket_name):
+
+    s3_client.download_file(bucket_name, FILE_NAME, "downloaded" + FILE_NAME)
+
 
 # def delete_object(s3_client, bucket_name):
 
 #     s3_client.delete_object(Bucket=bucket_name, Key=FILE_NAME)
 
-# def list_bucket_objects(s3_client, bucket_name):
 
-#     objects = []
-#     try:
-#         contents = s3_client.list_objects(Bucket=bucket_name)['Contents']
-#         for item in contents:
-#             objects.append(item.get("Key"))
-#     except KeyError:
-#         pass
+def list_bucket_objects(s3_client, bucket_name):
 
-#     print(f"Bucket: {bucket_name}\t Objects: {objects}")
-#     return objects
+    objects = []
+    try:
+        contents = s3_client.list_objects(Bucket=bucket_name)["Contents"]
+        for item in contents:
+            objects.append(item.get("Key"))
+    except KeyError:
+        pass
+
+    print(f"Bucket: {bucket_name}\t Objects: {objects}")
+    return objects
+
 
 def call_everything():
     s3 = get_client()
@@ -94,6 +103,7 @@ def call_everything():
 
     for bucket in bucket_names:
         objects = list_bucket_objects(s3, bucket)
+
 
 # if __name__ == "__main__":
 
